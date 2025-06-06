@@ -1,0 +1,61 @@
+name: setup ALB over EKS
+run-name: setup ALB over EKS by ${{ github.actor }} 
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        description: 'AWS Region'
+        required: true
+        default: 'us-east-1'
+      cluster:
+        description: 'EKS Cluster Name'
+        required: true
+        default: 'my-cluster'
+
+permissions:
+  id-token: write    # ✅ Required for OIDC
+  contents: read
+jobs:
+  setupalb:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout  
+        uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::610952688122:role/testoidc
+          aws-region: ${{ github.event.inputs.region }}
+
+      - name: enable cluster to use IRAC
+        run: |
+          eksctl utils associate-iam-oidc-provider \
+          --cluster ${{ github.event.inputs.cluster }}\
+          --approve
+      - name: download IAM role
+        run: |
+          curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.11.0/docs/install/iam_policy.json
+          aws iam create-policy \
+          --policy-name AWSLoadBalancerControllerIAMPolicy \
+          --policy-document file://iam_policy.json
+        
+      - name: service account for ALB
+        run: |
+          eksctl create iamserviceaccount \
+            --cluster=${{ github.event.inputs.cluster }} \
+            --namespace=kube-system \
+            --name=aws-load-balancer-controller \
+            --attach-policy-arn=arn:aws:iam::610952688122:policy/AWSLoadBalancerControllerIAMPolicy \
+            --override-existing-serviceaccounts \
+            --approve
+        ### Change this ^^^ Account ID 
+
+      - name: verify service account
+        run: |
+          eksctl get iamserviceaccount \
+          --cluster=${{ github.event.inputs.cluster }}\
+          --name=aws-load-balancer-controller \
+          --namespace=kube-system
+
+      - name: 

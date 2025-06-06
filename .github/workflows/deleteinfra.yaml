@@ -1,5 +1,5 @@
 name: delete the Infrastructure
-run-name: delete the Infrastructure by {{ github.actor }} in region {{ github.event.inputs.region }}
+run-name: delete the Infrastructure by ${{ github.actor }} in region ${{ github.event.inputs.region }}
 on:
   workflow_dispatch:
     inputs:

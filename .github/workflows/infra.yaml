@@ -1,5 +1,5 @@
 name: Provision Infrastructure
-run-name: Provision Infrastructure by {{ github.actor }} in region {{ github.event.inputs.region }}
+run-name: Provision Infrastructure by ${{ github.actor }} in region ${{ github.event.inputs.region }}
 on:
   workflow_dispatch:
     inputs:
