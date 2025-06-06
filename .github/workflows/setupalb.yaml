@@ -59,7 +59,7 @@ jobs:
       - name: verify service account
         run: |
           eksctl get iamserviceaccount \
-          --cluster=${{ github.event.inputs.cluster }}\
+          --cluster=${{ github.event.inputs.cluster }} \
           --name=aws-load-balancer-controller \
           --namespace=kube-system
 
