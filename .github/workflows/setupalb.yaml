@@ -11,12 +11,20 @@ on:
         description: 'EKS Cluster Name'
         required: true
         default: 'my-cluster'
+      install_alb:
+        description: 'Install AWS Load Balancer Controller'
+        required: true
+        options:
+          - 'yes'
+          - 'no'
+        type: choice
 
 permissions:
   id-token: write    # ✅ Required for OIDC
   contents: read
 jobs:
   setupalb:
+    if: ${{ github.event.inputs.install_alb == 'yes' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout  
@@ -62,4 +70,21 @@ jobs:
           --cluster=${{ github.event.inputs.cluster }} \
           --name=aws-load-balancer-controller \
           --namespace=kube-system
+  uninstall:
+    if: ${{ github.event.inputs.install_alb == 'no' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout  
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::610952688122:role/testoidc
+          aws-region: ${{ github.event.inputs.region }}
+          
+      - name: delete IAM role policy
+        run: |
+          aws iam delete-policy \
+            --policy-arn arn:aws:iam::610952688122:policy/AWSLoadBalancerControllerIAMPolicy
 

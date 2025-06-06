@@ -29,6 +29,10 @@ jobs:
           run: terraform init
           working-directory: infra
 
+        - name: state-check
+          run: terraform state list
+          working-directory: infra
+          
         - name: terraform delete
           run: terraform destroy --auto-approve
           working-directory: infra
