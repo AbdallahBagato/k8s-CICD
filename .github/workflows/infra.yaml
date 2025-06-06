@@ -36,6 +36,7 @@ jobs:
         if: steps.init.outcome == 'success'
         id: validate
         run: terraform validate
+        working-directory: infra
 
       - name: terraform plan
         if: steps.validate.outcome == 'success'
@@ -45,3 +46,4 @@ jobs:
       - name: terraform apply
         if: steps.plan.outcome == 'success'
         run: terraform apply --auto-approve
+        working-directory: infra
