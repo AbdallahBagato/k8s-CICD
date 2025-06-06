@@ -2,11 +2,11 @@ name: delete the Infrastructure
 run-name: delete the Infrastructure by {{ github.actor }} in region {{ github.event.inputs.region }}
 on:
   workflow_dispatch:
-  inputs:
-    region:
-      description: 'AWS Region'
-      required: true 
-      default: 'us-east-1'
+    inputs:
+      region:
+        description: 'AWS Region'
+        required: true 
+        default: 'us-east-1'
 permissions:
   id-token: write    # ✅ Required for OIDC 
   contents: read
