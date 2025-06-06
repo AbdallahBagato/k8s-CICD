@@ -31,7 +31,8 @@ jobs:
       - name: terraform init
         id: init
         run: terraform init
-      
+        working-directory: infra
+
       - name: terraform validate
         if: steps.init.outcome == 'success'
         id: validate
@@ -42,6 +43,7 @@ jobs:
         if: steps.validate.outcome == 'success'
         id: plan
         run: terraform plan 
+        working-directory: infra
         
       - name: terraform apply
         if: steps.plan.outcome == 'success'
