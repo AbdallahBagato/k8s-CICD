@@ -1,0 +1,47 @@
+name: Provision Infrastructure
+run-name: Provision Infrastructure by {{ github.actor }} in region {{ github.event.inputs.region }}
+on:
+  workflow_dispatch:
+  inputs:
+    region:
+      description: 'AWS Region'
+      required: true
+      default: 'us-east-1'
+
+permissions:
+  id-token: write    # ✅ Required for OIDC
+  contents: read
+
+jobs:
+  Provision:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.12.1
+      ## Auth Github with OIDC 
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::610952688122:role/testoidc
+          aws-region: ${{ github.event.inputs.region }}
+
+      - name: terraform init
+        id: init
+        run: terraform init
+      
+      - name: terraform validate
+        if: steps.init.outcome == 'success'
+        id: validate
+        run: terraform validate
+
+      - name: terraform plan
+        if: steps.validate.outcome == 'success'
+        id: plan
+        run: terraform plan 
+        
+      - name: terraform apply
+        if: steps.plan.outcome == 'success'
+        run: terraform apply --auto-approve
