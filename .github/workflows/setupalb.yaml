@@ -58,4 +58,3 @@ jobs:
           --name=aws-load-balancer-controller \
           --namespace=kube-system
 
-      - name: 
