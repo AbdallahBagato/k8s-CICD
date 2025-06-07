@@ -1,0 +1,24 @@
+name: CICD Pipeline to deploy the Application
+run-name: Deploy Application to AWS by ${{ github.actor }} on ${{ github.run_id }}
+on:
+  push:
+    branches:
+      - main
+jobs:
+  CI_Job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' 
+        
+      - name: Install Linter 
+        run: | 
+          pip install flake8 
+          flake8 
+        working-directory: ./weather_app
+        
