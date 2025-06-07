@@ -22,7 +22,7 @@ jobs:
           flake8 
         working-directory: weather
 
-      - name: Export the API KEY
+      - name: Testing the Code
         env:
           APIKEY: ${{ secrets.APIKEY }}
         run: |
@@ -31,4 +31,43 @@ jobs:
           pytest 
         working-directory: weather
 
-      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/weather:${{ github.run_id}}
+        working-directory: weather
+
+  CI_JOB_Auth:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21.1' # The Go version to download (if necessary) and use.
+
+      - name: Install Linter
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2
+          $GOPATH/bin/golangci-lint run ./auth
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/auth:${{ github.run_id}}
+     
