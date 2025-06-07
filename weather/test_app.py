@@ -1,5 +1,4 @@
 import unittest
-import os
 from main import app
 from unittest.mock import patch
 
