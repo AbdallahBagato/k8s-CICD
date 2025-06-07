@@ -21,20 +21,14 @@ jobs:
           pip install flake8 
           flake8 
         working-directory: weather
-      
-      - name: Unittest
+
+      - name: Export the API KEY
+        env:
+          APIKEY: ${{ secrets.APIKEY }}
         run: |
-          export APIKEY=0da866860fmshdc1cca700d3c89dp17cffdjsn0dc10ba9c00a
           pip install -r requirements.txt
           pip install pytest
-          pytest -v
+          pytest 
         working-directory: weather
 
-#      - name: Unittest
-#        run: |
-#          export APIKEY=${{ secrets.APIKEY}}
-#          echo "APIKEY is ${APIKEY}"
-#          pip install -r requirements.txt
-#          pip install pytest
-#          pytest -v
-#        working-directory: weather
+      
