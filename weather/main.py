@@ -32,8 +32,10 @@ def get_weather(city):
     }
 
     try:
-        response = requests.get(url, headers=headers, params=querystring)
-        response.raise_for_status()  # Raise an exception for non-2xx status codes
+        response = requests.get(
+            url, headers=headers, params=querystring
+        )
+        response.raise_for_status()  # Raise exception for non-2xx
         weather_data = response.json()
         return jsonify(weather_data)
 
@@ -43,7 +45,9 @@ def get_weather(city):
         )
 
     except Exception as e:
-        return make_response(jsonify({"message": "Error", "error": str(e)}), 500)
+        return make_response(
+            jsonify({"message": "Error", "error": str(e)}), 500
+        )
 
 
 if __name__ == "__main__":

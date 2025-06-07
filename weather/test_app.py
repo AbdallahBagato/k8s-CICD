@@ -1,6 +1,7 @@
 import unittest
 import requests
 
+
 class WeatherServiceTests(unittest.TestCase):
     BASE_URL = "http://localhost:5000"  # Adjust if running on a different port
 
@@ -24,5 +25,6 @@ class WeatherServiceTests(unittest.TestCase):
         data = response.json()
         self.assertIn("message", data)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
