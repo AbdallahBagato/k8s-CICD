@@ -25,6 +25,7 @@ jobs:
       - name: Unittest
         run: |
           export APIKEY=${{ secrets.APIKEY}}
+          pip install -r requirements.txt
           pip install pytest
           pytest -v
         working-directory: weather
