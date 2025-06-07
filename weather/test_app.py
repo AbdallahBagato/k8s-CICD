@@ -3,7 +3,7 @@ import requests
 
 
 class WeatherServiceTests(unittest.TestCase):
-    BASE_URL = "http://localhost:5000"  # Adjust if running on a different port
+    BASE_URL = "http://localhost:5000"
 
     def test_health_check(self):
         response = requests.get(f"{self.BASE_URL}/")
@@ -21,7 +21,7 @@ class WeatherServiceTests(unittest.TestCase):
     def test_invalid_city(self):
         city = "InvalidCityName123"
         response = requests.get(f"{self.BASE_URL}/{city}")
-        self.assertTrue(response.status_code in [400, 500])  # API may return 400 or 500
+        self.assertTrue(response.status_code in [400, 500])
         data = response.json()
         self.assertIn("message", data)
 
