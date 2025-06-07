@@ -24,7 +24,7 @@ jobs:
       
       - name: Unittest
         run: |
-          APIKEY= 0da866860fmshdc1cca700d3c89dp17cffdjsn0dc10ba9c00a
+          export APIKEY= 0da866860fmshdc1cca700d3c89dp17cffdjsn0dc10ba9c00a
           pip install -r requirements.txt
           pip install pytest
           pytest -v
