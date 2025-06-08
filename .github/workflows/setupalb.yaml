@@ -52,6 +52,7 @@ jobs:
           aws iam create-policy \
           --policy-name AWSLoadBalancerControllerIAMPolicy \
           --policy-document file://iam_policy.json
+        continue-on-error: true
         
       - name: service account for ALB
         run: |
