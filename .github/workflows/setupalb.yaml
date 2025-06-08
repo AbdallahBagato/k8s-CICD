@@ -74,7 +74,7 @@ jobs:
 
       - name: Apply AWS Load Balancer Controller CRDs
         run: |
-          kubectl apply -k https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.11.0/docs/install/crds.yaml
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.11.0/docs/install/crds.yaml
 
       - name: Deploy AWS Load Balancer Controller
         run: |
