@@ -85,6 +85,10 @@ jobs:
       - name: Wait for cert-manager webhook to be ready
         run: |
           kubectl rollout status deployment/cert-manager-webhook -n cert-manager --timeout=120s
+
+      - name: Apply AWS Load Balancer Controller CRDs
+        run: |
+          kubectl apply -f https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.11.0/crds.yaml
       
       - name: install AWS Load Balancer Controller
         run: |
