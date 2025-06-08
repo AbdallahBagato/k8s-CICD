@@ -57,8 +57,13 @@ func main() {
 	router.GET("/", health)
 	router.POST("/users/:id", loginUser)
 	router.POST("/users", createUser)
-	router.Run(":" + authPort)
+
+	if err := router.Run(":" + authPort); err != nil {
+		fmt.Printf("Failed to start server: %v\n", err)
+		os.Exit(1)
+	}
 }
+
 func getEnv(key, defaultValue string) string {
 	value, exists := os.LookupEnv(key)
 	if !exists {
@@ -114,9 +119,13 @@ func loginUser(c *gin.Context) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Bad credentials"})
 	}
 }
+
 func createUser(c *gin.Context) {
 	var u authdb.User
-	c.BindJSON(&u)
+	if err := c.BindJSON(&u); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
+		return
+	}
 	db, err := authdb.Connect(dbUser, dbPassword, dbHost, dbPort)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -133,6 +142,7 @@ func createUser(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"success": "User added successfully"})
 	}
 }
+
 func GenerateJWT(userName string) (string, error) {
 	var mySigningKey = []byte(secretKey)
 	token := jwt.New(jwt.SigningMethodHS256)
