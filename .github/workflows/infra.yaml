@@ -7,6 +7,10 @@ on:
         description: 'AWS Region'
         required: true
         default: 'us-east-1'
+      cluster_name:
+        description: 'EKS Cluster Name'
+        required: true
+        default: 'my-cluster'
 
 permissions:
   id-token: write    # ✅ Required for OIDC
@@ -49,3 +53,11 @@ jobs:
         if: steps.plan.outcome == 'success'
         run: terraform apply --auto-approve
         working-directory: infra
+
+      - name: Add username
+        run: |
+          eksctl create iamidentitymapping \
+          --cluster ${{ github.event.inputs.cluster_name }} \
+          --arn arn:aws:iam::610952688122:user/Admin \
+          --username Admin \
+          --group system:masters 
