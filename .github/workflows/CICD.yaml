@@ -5,7 +5,7 @@ on:
     branches:
       - main
 jobs:
-  CI_Job:
+  CI_Job_weather:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
@@ -74,7 +74,7 @@ jobs:
           export PATH=$PATH:$HOME/go/bin
           golangci-lint run
         working-directory: auth
-        
+
       - name: Run Trivy vulnerability scanner in fs mode
         uses: aquasecurity/trivy-action@0.28.0
         with:
@@ -86,7 +86,6 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          context: auth
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
@@ -96,4 +95,45 @@ jobs:
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/auth:${{ github.run_id}}
           context: auth
+
+  CI_JOB_UI:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner in fs mode
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          severity: HIGH,CRITICAL
+          scan-ref: './UI'
+          ignore-unfixed: true
+        
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/ui:${{ github.run_id}}
+          context: UI
+        
       
+  Deploy_Job:
+    runs-on: ubuntu-latest
+    needs: [CI_Job, CI_JOB_Auth, CI_JOB_UI]
+    steps:
+      - name: checkout code 
+        uses: actions/checkout@v4
+
+      - name: change in eks files
+        run: |
+          sed -i "s|bagato220/weather:.*|bagato220/weather:${{ github.run_id }}|" ./kubernetes/weathersvc/Deployment.yaml
+          sed -i "s|bagato220/auth:.*|bagato220/auth:${{ github.run_id }}|" ./kubernetes/AUTH/Deployment.yaml
+          sed -i "s|bagato220/ui:.*|bagato220/ui:${{ github.run_id }}|" ./kubernetes/UI/Deployment.yaml
+
