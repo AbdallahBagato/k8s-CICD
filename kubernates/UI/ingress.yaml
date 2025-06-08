@@ -2,14 +2,14 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: weatherapp-ui-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'  # optional if you want HTTPS
+    alb.ingress.kubernetes.io/target-type: ip
 spec:
-  tls:
-  - hosts: 
-    - weatherapp.local
-    secretName: weatherapp-ui-tls
   rules:
-  - host: weatherapp.local
-    http:
+  - http:
       paths:
       - path: /
         pathType: Prefix
