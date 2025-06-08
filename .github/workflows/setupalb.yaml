@@ -63,15 +63,6 @@ jobs:
             --attach-policy-arn=arn:aws:iam::610952688122:policy/AWSLoadBalancerControllerIAMPolicy \
             --override-existing-serviceaccounts \
             --approve
-
-      - name: Apply AWS Load Balancer Controller CRDs
-        run: |
-          kubectl apply -k "https://github.com/aws/eks-charts/stable/aws-load-balancer-controller/crds?ref=release-2.11.0"
-
-      - name: Deploy AWS Load Balancer Controller
-        run: |
-          kubectl apply -f https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.11.0/aws-load-balancer-controller.yaml
-          
         ### Change this ^^^ Account ID 
 
       - name: verify service account
@@ -80,6 +71,15 @@ jobs:
           --cluster=${{ github.event.inputs.cluster }} \
           --name=aws-load-balancer-controller \
           --namespace=kube-system
+
+      - name: Apply AWS Load Balancer Controller CRDs
+        run: |
+          kubectl apply -k https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.11.0/docs/install/crds.yaml
+
+      - name: Deploy AWS Load Balancer Controller
+        run: |
+          kubectl apply -f https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.11.0/aws-load-balancer-controller.yaml
+          
   uninstall:
     if: ${{ github.event.inputs.install_alb == 'no' }}
     runs-on: ubuntu-latest
