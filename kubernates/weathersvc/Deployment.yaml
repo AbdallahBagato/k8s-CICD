@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: weather-container
-        image: bagato220/weather:15520167389
+        image: bagato220/weather:15520418105
         ports:
         - containerPort: 5000
           name: http-get
