@@ -65,11 +65,12 @@ jobs:
       - name: Install golangci-lint
         if: steps.cache-golangci-lint.outputs.cache-hit != 'true'
         run: |
-          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2
-          export PATH=$PATH:$HOME/go/bin
-        
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2        
+          
       - name: Linting the code
-        run: golangci-lint run
+        run: |
+          export PATH=$PATH:$HOME/go/bin
+          golangci-lint run
         working-directory: auth
         continue-on-error: true
       
