@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: weatherapp-ui-container
-        image: bagato220/ui:15520635229
+        image: bagato220/ui:15520668450
         env:
         - name: AUTH_HOST
           value: service-auth
