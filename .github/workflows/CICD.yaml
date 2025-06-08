@@ -85,5 +85,5 @@ jobs:
         with:
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/auth:${{ github.run_id}}
-        working-directory: auth
-     
+          context: auth
+      
