@@ -88,13 +88,32 @@ jobs:
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: my-app-image
+          path: ./image
+        continue-on-error: true
+
+      - name: Load Docker image from TAR
+        run: docker load -i ./image/my-app.tar
 
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          push: true
+          push: false
           tags: ${{ vars.DOCKERHUB_USERNAME }}/auth:${{ github.run_id}}
           context: auth
+
+      - name: Save Docker image to TAR
+        run: docker save ${{ vars.DOCKERHUB_USERNAME }}/auth:${{ github.run_id}} -o my-app.tar
+
+      - name: Upload Docker image as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-app-image
+          path: my-app.tar
+
 
   CI_JOB_UI:
     runs-on: ubuntu-latest
@@ -133,7 +152,8 @@ jobs:
 
       - name: change in eks files
         run: |
-          sed -i "s|bagato220/weather:.*|bagato220/weather:${{ github.run_id }}|" ./kubernetes/weathersvc/Deployment.yaml
+          ls -l ./kubernates
+          sed -i "s|bagato220/weather:.*|bagato220/weather:${{ github.run_id }}|" ./kubernates/weathersvc/Deployment.yaml
           sed -i "s|bagato220/auth:.*|bagato220/auth:${{ github.run_id }}|" ./kubernetes/AUTH/Deployment.yaml
           sed -i "s|bagato220/ui:.*|bagato220/ui:${{ github.run_id }}|" ./kubernetes/UI/Deployment.yaml
 
