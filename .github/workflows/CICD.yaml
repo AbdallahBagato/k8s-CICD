@@ -150,11 +150,19 @@ jobs:
     steps:
       - name: checkout code 
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
 
       - name: change in eks files
         run: |
           ls -l ./kubernates
           sed -i "s|bagato220/weather:.*|bagato220/weather:${{ github.run_id }}|" ./kubernates/weathersvc/Deployment.yaml
-          sed -i "s|bagato220/auth:.*|bagato220/auth:${{ github.run_id }}|" ./kubernetes/AUTH/Deployment.yaml
-          sed -i "s|bagato220/ui:.*|bagato220/ui:${{ github.run_id }}|" ./kubernetes/UI/Deployment.yaml
-
+          sed -i "s|bagato220/auth:.*|bagato220/auth:${{ github.run_id }}|" ./kubernates/AUTH/Deployment.yaml
+          sed -i "s|bagato220/ui:.*|bagato220/ui:${{ github.run_id }}|" ./kubernates/UI/Deployment.yaml
+      - name: commit&push changes
+        run: |
+          git config --local user.email "abdallahbagato1999@gmail.com"
+          git config --local user.name "abdallahbagato"
+          git add .
+          git commit -m "Update deployment files with new image tags"
+          git push origin main
