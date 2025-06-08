@@ -97,6 +97,7 @@ jobs:
 
       - name: Load Docker image from TAR
         run: docker load -i ./image/my-app.tar
+        continue-on-error: true
 
       - name: Build and push
         uses: docker/build-push-action@v6
