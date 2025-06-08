@@ -74,8 +74,15 @@ jobs:
           export PATH=$PATH:$HOME/go/bin
           golangci-lint run
         working-directory: auth
-        continue-on-error: true
-      
+        
+      - name: Run Trivy vulnerability scanner in fs mode
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          severity: HIGH,CRITICAL
+          scan-ref: './auth'
+          ignore-unfixed: true
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
