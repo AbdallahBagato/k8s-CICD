@@ -1,7 +1,7 @@
 name: CICD Pipeline to deploy the Application
 run-name: Deploy Application to AWS by ${{ github.actor }} on ${{ github.run_id }}
 on:
-  push:
+  pull_request:
     branches:
       - main
 jobs:
