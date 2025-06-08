@@ -63,7 +63,23 @@ jobs:
             --attach-policy-arn=arn:aws:iam::610952688122:policy/AWSLoadBalancerControllerIAMPolicy \
             --override-existing-serviceaccounts \
             --approve
-        ### Change this ^^^ Account ID 
+
+      - name: Install AWS Load Balancer Controller CRDs
+        run: |
+          kubectl apply -k "github.com/aws/eks-charts/stable/aws-load-balancer-controller//crds?ref=release-2.11.0"
+
+      - name: Add Helm repo and install ALB Controller
+        run: |
+          helm repo add eks https://aws.github.io/eks-charts
+          helm repo update
+          helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \
+            -n kube-system \
+            --set clusterName=${{ github.event.inputs.cluster }} \
+            --set serviceAccount.create=false \
+            --set serviceAccount.name=aws-load-balancer-controller \
+            --set region=${{ github.event.inputs.region }} \
+            --set vpcId=<YOUR_VPC_ID>
+
 
       - name: verify service account
         run: |
