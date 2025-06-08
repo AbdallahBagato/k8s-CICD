@@ -86,13 +86,6 @@ jobs:
         run: |
           kubectl rollout status deployment/cert-manager-webhook -n cert-manager --timeout=120s
 
-      - name: Apply AWS Load Balancer Controller CRDs
-        run: |
-          curl -Lo crds.yaml - name: Apply AWS Load Balancer Controller CRDs
-  run: |
-    curl -Lo crds.yaml https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.11.0/crds.yaml
-    kubectl apply -f crds.yaml
-          kubectl apply -f crds.yaml
       - name: install AWS Load Balancer Controller
         run: |
           curl -Lo v2_11_0_full.yaml https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.11.0/v2_11_0_full.yaml
