@@ -82,6 +82,10 @@ jobs:
           --validate=false \
           -f https://github.com/jetstack/cert-manager/releases/download/v1.13.5/cert-manager.yaml
       
+      - name: Wait for cert-manager webhook to be ready
+        run: |
+          kubectl rollout status deployment/cert-manager-webhook -n cert-manager --timeout=120s
+      
       - name: install AWS Load Balancer Controller
         run: |
           curl -Lo v2_11_0_full.yaml https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.11.0/v2_11_0_full.yaml
