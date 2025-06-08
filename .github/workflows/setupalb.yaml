@@ -72,6 +72,10 @@ jobs:
           --name=aws-load-balancer-controller \
           --namespace=kube-system
 
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region ${{ github.event.inputs.region }} --name ${{ github.event.inputs.cluster }}
+      
       - name: cert manager
         run: |
           kubectl apply \
@@ -92,7 +96,7 @@ jobs:
         run: |
           curl -Lo v2_11_0_ingclass.yaml https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.11.0/v2_11_0_ingclass.yaml
           kubectl apply -f v2_11_0_ingclass.yaml
-          
+
   uninstall:
     if: ${{ github.event.inputs.install_alb == 'no' }}
     runs-on: ubuntu-latest
